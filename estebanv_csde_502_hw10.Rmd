@@ -5,7 +5,7 @@ header-includes:
 - \usepackage{float} 
 - \floatplacement{figure}{H}
 output:
-  bookdown::html_document2:
+  html_document:
     theme: journal
     number_sections: TRUE
     self_contained: TRUE
@@ -14,7 +14,6 @@ output:
     toc_float:
       collapsed: TRUE
       smooth_scroll: TRUE
-urlcolor: blue
   pdf_document:
     toc: TRUE
     toc_depth: 2
@@ -95,6 +94,7 @@ tab.nums = captioner(prefix = "Table")
                            data = df, 
                            FUN = sum))
   
+  
   ##Summing deaths totals by year
   df = merge(by = "year",
              x = df,
@@ -113,3 +113,11 @@ tab.nums = captioner(prefix = "Table")
   
 ```
 
+# Introduction
+
+Social and technological advancements in the United States over the past century has increased overall life expectancy and reduced the crude death rate (CDR) of the population. The current project explores the shifting U.S. crude death rate from 1933 - 2019. More specifically, I examine the constancy of CDR change over time. Given that the U.S. population as a whole experienced a variety of mortality relevant events over this 86 year period, including several wars, disease outbreaks, and economic recessions, it would stand to reason that CDR change is nonconstant. Describing the contours of CDR change over time can help with understanding the aggravating and mitigating factors of population-level mortality.
+
+# Methods
+
+## Data
+Population and mortality data were obtained from the [Human Mortality Database](https://www.mortality.org/) a collaborative initiative by the UC Berkeley Department of Demography and the Max Planck Institute for Demographic Research.
