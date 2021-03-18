@@ -193,5 +193,5 @@ A benefit of representing this data graphically, instead of in tabular format, i
 
 The source code for this document is included below.
 ```{r comment = '', results = "markdown"}
-cat(readLines(con = "estebanv_csde502_hw10.Rmd"), sep = "\n")
+cat(readLines("https://raw.githubusercontent.com/estebanv-uw/csde502_hw10/main/estebanv_csde_502_hw10.Rmd"), sep = "\n")
 ```
