@@ -5,30 +5,28 @@ header-includes:
 - \usepackage{float} 
 - \floatplacement{figure}{H}
 output:
-  html_document:
-    theme: journal
-    number_sections: TRUE
-    self_contained: TRUE
-    code_folding: hide
-    toc: TRUE
-    toc_float:
-      collapsed: TRUE
-      smooth_scroll: TRUE
+  # html_document:
+  #   theme: journal
+  #   number_sections: TRUE
+  #   self_contained: TRUE
+  #   code_folding: hide
+  #   toc: TRUE
+  #   toc_float:
+  #     collapsed: TRUE
+  #     smooth_scroll: TRUE
   pdf_document:
     toc: TRUE
     toc_depth: 2
     number_sections: TRUE
-    fig_width: 7
-    fig_height: 6
     fig_caption: true
 ---
 ```{css, echo=FALSE}
 #Step 0.0.1: Setting wide-wise scrolling
 pre, code {white-space: pre !important; overflow-x: auto}
 ```
-```{r setup, warning = FALSE, message = FALSE, results = "hide"}
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
 #Step 0.0.2: Specifying chunk options
-knitr::opts_chunk$set(echo = TRUE, 
+knitr::opts_chunk$set(echo = FALSE, 
                       message = FALSE, 
                       warning = FALSE, 
                       results = "hide",
@@ -87,6 +85,12 @@ tab.nums = captioner(prefix = "Table")
   ##Joining data frame
   df = merge(x = df.pop, y = df.dth, by = c("year", "age"))
   
+  ##Generating decade indicator
+  df %<>% mutate(decade = cut(year, 
+                              breaks = seq(1930, 2020, 10),
+                              ordered_result = TRUE,
+                              dig.lab = 4))
+  
   ##Summing population totals by year
   df = merge(by = "year",
              x = df,
@@ -113,6 +117,7 @@ tab.nums = captioner(prefix = "Table")
   
 ```
 
+\newpage
 # Introduction
 
 Social and technological advancements in the United States over the past century has increased overall life expectancy and reduced the crude death rate (CDR) of the population. The current project explores the shifting U.S. crude death rate from 1933 - 2019. More specifically, I examine the constancy of CDR change over time. Given that the U.S. population as a whole experienced a variety of mortality relevant events over this 86 year period, including several wars, disease outbreaks, and economic recessions, it would stand to reason that CDR change is nonconstant. Describing the contours of CDR change over time can help with understanding the aggravating and mitigating factors of population-level mortality.
@@ -120,4 +125,73 @@ Social and technological advancements in the United States over the past century
 # Methods
 
 ## Data
-Population and mortality data were obtained from the [Human Mortality Database](https://www.mortality.org/) a collaborative initiative by the UC Berkeley Department of Demography and the Max Planck Institute for Demographic Research.
+Population and death count data were obtained from the [Human Mortality Database](https://www.mortality.org/) (HMD), a collaborative initiative by the UC Berkeley Department of Demography and the Max Planck Institute for Demographic Research. Data were furnished by year and by age (in single-years). The HMD furnished two sets of age-specific population totals for the year 1959, without documentation as to their differences. For the purpose of this project, the second set of totals were retained while the first set was removed.
+
+## Analysis
+I used descriptive analyses to explore trends in the U.S. CDR over time. To examine the constancy of CDR change over time, I calculated the mean CDR and standard deviation by decade. Additionally, to explore year-to-year trends, I graphed the CDR over time. 
+
+# Results
+```{r}
+#Step 3.0.1: Summarizing CDR by decade
+  ##Table assembly
+  obj.x = aggregate(formula = cdr ~ decade, 
+                    data = df, 
+                    FUN = function(x) c(mean = mean(x), sd = sd(x)))
+
+  ##Table formatting
+  tab.1 = 
+    kable(do.call(data.frame, obj.x),
+          digits = 3,
+          col.names = c("Decade", "Mean", "SD"),
+          booktabs = TRUE,
+          align = "l") %>%
+    
+    kable_styling(full_width = FALSE,
+                  position = "left") %>%
+    
+    row_spec(row = 0, bold = TRUE, align = "l")
+
+#Step 3.0.2: Graphing CDR change by year
+fig.1 =
+  ggplot(df, aes(x = year, y = cdr)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(1930, 2020, 5)) +
+  theme_classic() + 
+  xlab("\nYear") +
+  ylab("U.S. Crude Death Rate per 1,000 \n") +
+  theme(panel.border = element_rect(fill = NA, size = 1))
+```
+
+The maximum CDR observed between 1933 - 2019 was `r round(max(df$cdr), digits = 1)` per 1,000 person-years during the year `r mean(df$year[df$cdr == max(df$cdr)])`, while the lowest observed CDR was `r round(min(df$cdr), digits = 1)` per 1,000 person-years was observed during the year `r mean(df$year[df$cdr == min(df$cdr)])`. A summary of average CDR by decade is furnished in Table 1. 
+
+`r tab.nums(name = "t1", caption = "Average CDR per 1,000 by decade")`
+```{r, results = "markdown"}
+tab.1
+```
+
+The mean CDR by decade follows a downward trend from 1930 - 2010, but then begins to climb in 2010 - 2020. The standard deviation for the decade 2010 - 2020 is comparatively larger than the preceding decades, indicating instability. To drill down these trends further, the plotted CDRs by individual year are presented in Figure 1.
+
+\newpage
+`r fig.nums(name = "f1", caption = "U.S. Crude Death Rate, 1933 - 2019")`
+```{r, results = "markdown", fig.align='center'}
+fig.1
+```
+
+Figure 1 suggests that, for the period of 1955 - 1970, while there were year-to-year changes in the CDR, the overall CDR remained relatively stable. Similarly, the CDRs from 1980 - 2000 remained stable. The tail ends of the time frame are the most volatile, with the CDR dropping dramatically from 1933 - 1955 (just a ~20 year time span). Similarly, the CDR drops to an all time low but then quickly climbs again. 
+
+# Discussion
+
+Within the past 83 years the U.S. crude death rate has dropped significantly, which is to be expected. However, this change was not uniform over time. Figure 1 describes how the CDR was most unstable from 1933 - 1955, which aligns with the era of The Great Depression and WWII. Interestingly, the years 1955 - 1970 observed relatively stable crude death rates, yet they overlap with the period of the Vietnam War. After the Vietnam war ends, the CDR drops dramatically to another quasi-plateau period: 1980 - 2000. The stability of year-to-year CDRs during this period is curious given that the HIV/AIDS crisis defined much of the two decades. Finally, the uptick in year-to-year CDRs starting in 2010 is unusual, as it climbs to equal the peak of CDRs in the 1980 - 2000 period. It is unclear what is driving this resurgence in mortality.
+
+# Conclusions
+
+The shifting landscape of U.S. mortality over the past 3 years has been extremely dynamic, and certainly not consistent over time. We observed two CDR plateau periods, 1955 - 1970 and 1980 - 2000, with a sharp transition period of 1970 - 1980. This drop aligns with the end of the Vietnam war, which could be a driving factor of lower mortality. The biggest concern, however, is of the increasing CDR since 2010 that is difficult to explain and may continue to grow.
+
+A benefit of representing this data graphically, instead of in tabular format, is visual representation can help us join narratives from different areas. It is easier, for instance, to discuss the sociopolitical landscape driving the visualized trends, than for merely looking at a spreadsheet or table. 
+
+# Code Appendix
+
+The source code for this document is included below.
+```{r comment = '', results = "markdown"}
+cat(readLines(con = "estebanv_csde502_hw10.Rmd"), sep = "\n")
+```
