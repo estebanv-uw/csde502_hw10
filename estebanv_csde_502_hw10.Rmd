@@ -53,6 +53,26 @@ fig.nums = captioner(prefix = "Figure")
 tab.nums = captioner(prefix = "Table")
 
 #Step 0.0.7: Loading data
-
+  ##Specifying data URLs
+  url.pop = paste0("https://raw.githubusercontent.com/estebanv-uw/",
+                   "csde502_hw10/main/population_data.txt")
+  url.dth = paste0("https://raw.githubusercontent.com/estebanv-uw/",
+                   "csde502_hw10/main/mortality_data.txt")
+  
+  ##Reading population data
+  df.pop = read.table(file = url.pop, header = TRUE)
+  df.dth = read.table(file = url.dth, header = TRUE)
+  names(df.pop) %<>% tolower()
+  names(df.dth) %<>% tolower()
+  
+  ##Subsetting data to last 50 years
+  df.pop %<>% filter(year >= 1970) %>% select(year, age, total)
+  df.dth %<>% filter(year >= 1970) %>% select(year, age, total)
+  names(df.pop)[3] = "n"
+  names(df.dth)[3] = "d"
+  
+  ##Joining data frame
+  df = merge(x = df.pop, y = df.dth, by = c("year", "age"))
+  
 ```
 
