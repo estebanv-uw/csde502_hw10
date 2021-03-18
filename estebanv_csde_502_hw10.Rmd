@@ -60,14 +60,28 @@ tab.nums = captioner(prefix = "Table")
                    "csde502_hw10/main/mortality_data.txt")
   
   ##Reading population data
-  df.pop = read.table(file = url.pop, header = TRUE)
-  df.dth = read.table(file = url.dth, header = TRUE)
+  df.pop = read.table(file = url.pop, header = TRUE, skip = 2)
+  df.dth = read.table(file = url.dth, header = TRUE, skip = 2)
   names(df.pop) %<>% tolower()
   names(df.dth) %<>% tolower()
   
-  ##Subsetting data to last 50 years
-  df.pop %<>% filter(year >= 1970) %>% select(year, age, total)
-  df.dth %<>% filter(year >= 1970) %>% select(year, age, total)
+  ##Correcting character vectors
+  
+    ###Filtering out second entries for year == 1959
+    df.pop %<>% filter(year != "1959-")
+    
+    ###Rendering variable year as integer
+    df.pop$year[df.pop$year == "1959+"] = "1959"
+    df.pop$year %<>% as.integer()
+  
+    ###Rendering variable age as integer
+    df.pop$age[df.pop$age == "110+"] = "110"
+    df.pop$age %<>% as.integer()
+  
+  
+  ##Subsetting data
+  df.pop %<>% filter(year != "1959-") %>% select(year, age, total)
+  df.dth %<>% filter(year != 1959) %>% select(year, age, total)
   names(df.pop)[3] = "n"
   names(df.dth)[3] = "d"
   
@@ -87,6 +101,15 @@ tab.nums = captioner(prefix = "Table")
              y = aggregate(formula = cbind(dtotal = d) ~ year, 
                            data = df, 
                            FUN = sum))
+  
+  ##Age-specific death rates
+  df %<>% mutate(m = d/n)
+  
+  ##Proportional age distribution
+  df %<>% mutate(c = n/ntotal)
+  
+  ##Calculating crude death rate per 1,000
+  df %<>% mutate(cdr = (dtotal/ntotal) * 1000)
   
 ```
 
