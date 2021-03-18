@@ -74,5 +74,21 @@ tab.nums = captioner(prefix = "Table")
   ##Joining data frame
   df = merge(x = df.pop, y = df.dth, by = c("year", "age"))
   
+  ##Summing population totals by year
+  df = 
+  merge(by = "year",
+        x = df,
+        y = aggregate(formula = cbind(ptotal = n) ~ year, 
+                      data = df, 
+                      FUN = sum))
+  
+  ##Summing death totals by year
+  df = 
+  merge(by = "year",
+        x = df,
+        y = aggregate(formula = cbind(dtotal = d) ~ year, 
+                      data = df, 
+                      FUN = sum))
+  
 ```
 
