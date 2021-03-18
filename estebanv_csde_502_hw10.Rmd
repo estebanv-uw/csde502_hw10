@@ -1,0 +1,58 @@
+---
+title: "CSDE 502 Final Assignment"
+author: "[Esteban J. Valencia](mailto:estebanv@uw.edu)"
+header-includes:
+- \usepackage{float} 
+- \floatplacement{figure}{H}
+output:
+  bookdown::html_document2:
+    theme: journal
+    number_sections: TRUE
+    self_contained: TRUE
+    code_folding: hide
+    toc: TRUE
+    toc_float:
+      collapsed: TRUE
+      smooth_scroll: TRUE
+urlcolor: blue
+  pdf_document:
+    toc: TRUE
+    toc_depth: 2
+    number_sections: TRUE
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+---
+```{css, echo=FALSE}
+#Step 0.0.1: Setting wide-wise scrolling
+pre, code {white-space: pre !important; overflow-x: auto}
+```
+```{r setup, warning = FALSE, message = FALSE, results = "hide"}
+#Step 0.0.2: Specifying chunk options
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      results = "hide",
+                      width = 1000)
+
+#Step 0.0.4: Setting additional options
+options(repos = "https://mirror.las.iastate.edu/CRAN/",
+        width = 1000)
+
+#Step 0.0.5: Loading requisite packages from library
+library(captioner)
+library(dplyr)
+library(tidyverse)
+library(magrittr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+
+#Step 0.0.6: Setting captions
+fig.nums = captioner(prefix = "Figure")
+tab.nums = captioner(prefix = "Table")
+
+#Step 0.0.7: Loading data
+
+```
+
